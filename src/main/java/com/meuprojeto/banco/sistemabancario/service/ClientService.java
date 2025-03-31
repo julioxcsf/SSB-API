@@ -1,7 +1,9 @@
 package com.meuprojeto.banco.sistemabancario.service;
 
+import com.meuprojeto.banco.sistemabancario.exceptions.ClientUnknownException;
 import com.meuprojeto.banco.sistemabancario.model.Client;
 import com.meuprojeto.banco.sistemabancario.repository.ClientRepository;
+import com.meuprojeto.banco.sistemabancario.security.SecurityOperator;
 import com.meuprojeto.banco.sistemabancario.validator.ClientValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,18 +16,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClientService {
 
+    //injeção pelo Spring
     private final ClientRepository clientRepository;
     private final ClientValidator validator;
 
-    //@annotation do lombok cria para mim
-    /*public ClientService(ClientRepository clientRepository,
-                            ClientValidator clientValidator) {
-        this.clientRepository = clientRepository;
-        this.validator = clientValidator;
-    }*/
-
     public Client save(Client client) {
-        validator.check(client);
+        validator.check(client);//verifica se o email, cpf e junção nome+dataNascimento ja foram cadastrados
+        String password = client.getEmail()+client.getPassword();//aglutinar as string nessa ordem!
+        client.setPassword( SecurityOperator.hashGenerator(password) );//senha real
         return clientRepository.save(client);
     }
 
@@ -60,6 +58,10 @@ public class ClientService {
         }
         validator.check(client);
         clientRepository.save(client);
+    }
+
+    public Optional<Client> getClientByEmail(String email) {
+        return clientRepository.findByEmail(email);
     }
 
 }

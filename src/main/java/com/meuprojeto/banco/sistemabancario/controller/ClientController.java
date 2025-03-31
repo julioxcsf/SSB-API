@@ -3,16 +3,20 @@ package com.meuprojeto.banco.sistemabancario.controller;
 import com.meuprojeto.banco.sistemabancario.controller.dto.*;
 import com.meuprojeto.banco.sistemabancario.controller.dto.account.AccountDTOResponse;
 import com.meuprojeto.banco.sistemabancario.controller.dto.client.ClientDTO;
+import com.meuprojeto.banco.sistemabancario.controller.dto.client.LoginDTO;
 import com.meuprojeto.banco.sistemabancario.controller.dto.client.ClientDTOResponse;
+import com.meuprojeto.banco.sistemabancario.controller.dto.client.LoginDTOResponse;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnCreate;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnUpdateEmail;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnUpdatePassword;
 import com.meuprojeto.banco.sistemabancario.exceptions.DuplicatedRegisterException;
 import com.meuprojeto.banco.sistemabancario.model.Account;
 import com.meuprojeto.banco.sistemabancario.model.Client;
+import com.meuprojeto.banco.sistemabancario.security.SecurityOperator;
 import com.meuprojeto.banco.sistemabancario.service.AccountService;
 import com.meuprojeto.banco.sistemabancario.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,7 +38,7 @@ public class ClientController {
     private final ClientService service;
     private final AccountService accountService;
 
-    @CrossOrigin(origins = "*", exposedHeaders = "Location")
+    //@CrossOrigin(origins = "*", exposedHeaders = "Location")
     @PostMapping
     public ResponseEntity<Object> register(@RequestBody @Validated(OnCreate.class)
                                            ClientDTO clientDTO) {
@@ -54,6 +58,33 @@ public class ClientController {
             ErrorResponse error = ErrorResponse.conflict(e.getMessage());
             return ResponseEntity.status(error.status()).body(error);
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody LoginDTO loginRequest) {
+
+        Optional<Client> clientOpt = service.getClientByEmail(loginRequest.email());
+
+        if (clientOpt.isPresent()) {
+            Client client = clientOpt.get();
+
+            boolean senhaValida = SecurityOperator.checkPassword(
+                    loginRequest.email() + loginRequest.senha(),
+                    client.getPassword());
+            if (senhaValida) {
+                // Login autorizado
+                LoginDTOResponse response = new LoginDTOResponse(
+                        "Login realizado com sucesso",
+                        client.getId(),
+                        client.getName()
+                );
+                return ResponseEntity.ok(response);
+                // ou return ResponseEntity.ok(new LoginResponse(...));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Email ou senha incorretos");
     }
 
     @GetMapping("/{clientId}")

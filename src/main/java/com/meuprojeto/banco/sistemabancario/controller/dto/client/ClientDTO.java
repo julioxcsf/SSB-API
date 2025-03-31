@@ -35,7 +35,7 @@ public record ClientDTO (
         String email,
 
         @NotBlank(message = "Senha é obrigatória", groups = {OnCreate.class, OnUpdatePassword.class})
-        @Size(min = 1, max = 255, message = "hashcode deve ter 255 caracteres",
+        @Size(min = 8, max = 20, message = "A senha deve ter de 8 a 20 caracteres.",
                 groups = {OnCreate.class, OnUpdatePassword.class})
         String senha_hash) {
 
@@ -45,7 +45,7 @@ public record ClientDTO (
         client.setCpf(cpf);
         client.setBorn(nascimento);
         client.setEmail(email);
-        client.setPasswordHash(senha_hash);
+        client.setPassword(senha_hash);
         return client;
     }
 }
