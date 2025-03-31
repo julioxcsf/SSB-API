@@ -31,7 +31,7 @@ public class Client {
     private String email;
 
     @Column(name = "senha_hash", nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(name = "ocupacao")
     private String occupation ;
