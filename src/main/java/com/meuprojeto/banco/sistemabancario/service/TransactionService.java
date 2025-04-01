@@ -1,9 +1,8 @@
 package com.meuprojeto.banco.sistemabancario.service;
 
-import com.meuprojeto.banco.sistemabancario.exceptions.ClientUnknownException;
-import com.meuprojeto.banco.sistemabancario.exceptions.OperationNotAllowedException;
 import com.meuprojeto.banco.sistemabancario.model.Account;
 import com.meuprojeto.banco.sistemabancario.model.Transaction;
+import com.meuprojeto.banco.sistemabancario.model.TransactionType;
 import com.meuprojeto.banco.sistemabancario.repository.AccountRepository;
 import com.meuprojeto.banco.sistemabancario.repository.TransactionRepository;
 import com.meuprojeto.banco.sistemabancario.validator.TransactionValidator;
@@ -11,9 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -29,8 +27,21 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> findByAccount(Account account) {
+    //retorna as transações que a conta é a origem
+    public List<Transaction> findByOrigin(Account account) {
         return transactionRepository.findByAccountOrigin(account);
+    }
+
+    //retorna as transações que a conta é o destino
+    public List<Transaction> findByTarget(Account account) {
+        return  transactionRepository.findByAccountTarget(account);
+    }
+
+    public List<Transaction> buscarTransacoesComFiltros(Account account,
+                                                        TransactionType tipo,
+                                                        LocalDateTime inicio,
+                                                        LocalDateTime fim) {
+        return transactionRepository.findByAccountWithFilters(account, tipo, inicio, fim);
     }
 
     public void executeTransfer(Account origin, Account target, BigDecimal amount) {

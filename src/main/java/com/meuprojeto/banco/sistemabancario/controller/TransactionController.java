@@ -4,15 +4,16 @@ import com.meuprojeto.banco.sistemabancario.controller.dto.transaction.Transacti
 import com.meuprojeto.banco.sistemabancario.exceptions.AccountUnknownException;
 import com.meuprojeto.banco.sistemabancario.model.Account;
 import com.meuprojeto.banco.sistemabancario.model.Transaction;
+import com.meuprojeto.banco.sistemabancario.model.TransactionType;
 import com.meuprojeto.banco.sistemabancario.service.AccountService;
 import com.meuprojeto.banco.sistemabancario.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @CrossOrigin(origins = "*") // Libera para qualquer origem (somente para teste)
 @RequiredArgsConstructor
@@ -23,30 +24,76 @@ public class TransactionController {
     public final TransactionService transactionService;
     public final AccountService accountService;
 
+
     @GetMapping("/{number}")
-    public ResponseEntity<Object> getTransactionByAccount(@PathVariable String number) {
+    public ResponseEntity<Object> getTransactionByAccount(@PathVariable String number,
+                                                          @RequestParam(required = false, name = "tipo") TransactionType tipo,
+                                                          @RequestParam(required = false, name = "inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+                                                          @RequestParam(required = false, name = "fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
         Long account_number = Long.parseLong(number);
         try {
 
             Account account = accountService.getAccountByNumber(account_number);
 
             List<Transaction> transactionList =
-                        transactionService.findByAccount(account);
+                    transactionService.buscarTransacoesComFiltros(account, tipo, inicio, fim);
 
-            if(transactionList.isEmpty()) {
-                return ResponseEntity.ok(Collections.emptyList());
-            }
+            List<TransactionDTOResponse> allTransactions = transactionList.stream()
+                    .map(TransactionDTOResponse::new)
+                    .sorted(Comparator.comparing(TransactionDTOResponse::dataTransacao).reversed())
+                    .toList();
 
-            List<TransactionDTOResponse> transactions = transactionList.stream().map(
-                    tr -> new TransactionDTOResponse(tr.getAccountOrigin(),
-                            tr.getAccountTarget(),
-                            tr.getType(),
-                            tr.getValue(),
-                            tr.getTransactionDate())).toList();
-            return ResponseEntity.ok(transactions);
+            return ResponseEntity.ok(allTransactions);
 
         } catch (AccountUnknownException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
+    /*@GetMapping("/{number}")
+    public ResponseEntity<Object> getTransactionByAccount(@PathVariable String number,
+           @RequestParam(required = false, name = "tipo") TransactionType tipo,
+           @RequestParam(required = false, name = "inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+           @RequestParam(required = false, name = "fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
+        Long account_number = Long.parseLong(number);
+        try {
+
+            Account account = accountService.getAccountByNumber(account_number);
+
+            List<Transaction> originList = transactionService.findByOrigin(account);
+
+            List<Transaction> targetList = transactionService.findByTarget(account);
+
+            List<TransactionDTOResponse> allTransactions  = new ArrayList<>();
+            for (Transaction tr : originList) {
+                allTransactions.add(new TransactionDTOResponse(
+                        tr.getAccountOrigin(),
+                        tr.getAccountTarget(),
+                        tr.getType(),
+                        tr.getValue(),
+                        tr.getTransactionDate()
+                ));
+            }
+
+            for (Transaction tr : targetList) {
+                allTransactions.add(new TransactionDTOResponse(
+                        tr.getAccountOrigin(),
+                        tr.getAccountTarget(),
+                        tr.getType(), // novo tipo para recebimento
+                        tr.getValue(),
+                        tr.getTransactionDate()
+                ));
+            }
+
+            // opcional: ordenar por data mais recente
+            allTransactions.sort(Comparator.comparing(TransactionDTOResponse::dataTransacao).reversed());
+
+            return ResponseEntity.ok(allTransactions);
+
+        } catch (AccountUnknownException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }*/
 }

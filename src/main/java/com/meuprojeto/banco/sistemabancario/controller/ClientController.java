@@ -2,10 +2,7 @@ package com.meuprojeto.banco.sistemabancario.controller;
 
 import com.meuprojeto.banco.sistemabancario.controller.dto.*;
 import com.meuprojeto.banco.sistemabancario.controller.dto.account.AccountDTOResponse;
-import com.meuprojeto.banco.sistemabancario.controller.dto.client.ClientDTO;
-import com.meuprojeto.banco.sistemabancario.controller.dto.client.LoginDTO;
-import com.meuprojeto.banco.sistemabancario.controller.dto.client.ClientDTOResponse;
-import com.meuprojeto.banco.sistemabancario.controller.dto.client.LoginDTOResponse;
+import com.meuprojeto.banco.sistemabancario.controller.dto.client.*;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnCreate;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnUpdateEmail;
 import com.meuprojeto.banco.sistemabancario.controller.dto.validationGroup.OnUpdatePassword;
@@ -87,6 +84,7 @@ public class ClientController {
                 .body("Email ou senha incorretos");
     }
 
+
     @GetMapping("/{clientId}")
     public ResponseEntity<ClientDTOResponse> getInfo(@PathVariable String clientId) {
         UUID id = UUID.fromString(clientId);
@@ -96,6 +94,7 @@ public class ClientController {
             List<Account> accounts = accountService.findClientAccounts(client);
 
             List<AccountDTOResponse> accountDTOS = accounts.stream().map(acc -> new AccountDTOResponse(
+                    acc.getClient().getId(),
                     acc.getClient().getName(),
                     acc.getNumber(),
                     acc.getType(),
@@ -112,6 +111,13 @@ public class ClientController {
             return ResponseEntity.ok(dto);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ClientDTOResponseId> getIdByEmail(@PathVariable String email) {
+        UUID id = service.getClientByEmail(email).get().getId();
+        ClientDTOResponseId dto = new ClientDTOResponseId(id);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

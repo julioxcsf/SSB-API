@@ -39,7 +39,19 @@ public class AccountController {
     public ResponseEntity<Object> createAccount(@RequestBody @Validated(OnCreate.class)
                                                     AccountDTO accountDTO) {
         try {
-            Optional<Client> client = clientService.getById(UUID.fromString(accountDTO.clientId()));
+            // Validação do UUID
+            if (accountDTO.clientId() == null || accountDTO.clientId().isBlank()) {
+                return ResponseEntity.badRequest().body("ID do cliente é obrigatório.");
+            }
+
+            UUID clientUUID;
+            try {
+                clientUUID = UUID.fromString(accountDTO.clientId());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body("Formato de UUID inválido para o cliente.");
+            }
+
+            Optional<Client> client = clientService.getById(clientUUID);
             if(client.isEmpty()) {
                 throw new ClientUnknownException("Cliente não cadastrado.");
             }
@@ -58,25 +70,40 @@ public class AccountController {
     }
 
     @GetMapping("/{number}")
-    public ResponseEntity<AccountDTOResponse> getAccountInfo(@PathVariable String number) {
-        Long account_number = Long.parseLong(number);
-        Account account = accountService.getAccountByNumber(account_number);
+    public ResponseEntity<?> getAccountInfo(@PathVariable String number) {
+        try {
+            if (number == null || number.isBlank()) {
+                throw new IllegalArgumentException("Número da conta está vazio ou ausente.");
+            }
 
-        AccountDTOResponse dtoResponse = new AccountDTOResponse(
-                            account.getClient().getName(),
-                            account.getNumber(),
-                            account.getType(),
-                            account.getBalance(),
-                            account.getCreatedAt(),
-                            account.isActive());
-        return ResponseEntity.ok(dtoResponse);
+            Long accountNumber = Long.parseLong(number);
+            Account account = accountService.getAccountByNumber(accountNumber);
+
+            AccountDTOResponse dtoResponse = new AccountDTOResponse(
+                    account.getClient().getId(),
+                    account.getClient().getName(),
+                    account.getNumber(),
+                    account.getType(),
+                    account.getBalance(),
+                    account.getCreatedAt(),
+                    account.isActive());
+
+            return ResponseEntity.ok(dtoResponse);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Número da conta inválido. Deve conter apenas dígitos.");
+        }
     }
 
     @Transactional
     @PutMapping("/{number}/transfer")
     public ResponseEntity<Object> transfer(@PathVariable String number,@RequestBody TransactionDTO dto) {
-        Long accountNumber = Long.parseLong(number);
         try {
+            if (number == null || number.isBlank()) {
+                throw new IllegalArgumentException("Número da conta está vazio ou ausente.");
+            }
+            Long accountNumber = Long.parseLong(number);
+
             Account accountOrigin = accountService.getAccountByNumber(accountNumber);
             Account accountTarget = accountService.getAccountByNumber(dto.numeroContaDestino());
 
@@ -91,12 +118,17 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (OperationNotAllowedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("Número da conta inválido. Deve conter apenas dígitos.");
+    }
     }
 
     @Transactional
     @PutMapping("/{number}/deposit")
     public ResponseEntity<Object> deposit(@PathVariable String number,@RequestBody TransactionDTO dto) {
+        if (number == null || number.isBlank()) {
+            throw new IllegalArgumentException("Número da conta está vazio ou ausente.");
+        }
         Long accountNumber = Long.parseLong(number);
         try {
             Account account = accountService.getAccountByNumber(accountNumber);
@@ -117,6 +149,9 @@ public class AccountController {
     @Transactional
     @PutMapping("/{number}/withdraw")
     public ResponseEntity<Object> withdraw(@PathVariable String number,@RequestBody TransactionDTO dto) {
+        if (number == null || number.isBlank()) {
+            throw new IllegalArgumentException("Número da conta está vazio ou ausente.");
+        }
         Long accountNumber = Long.parseLong(number);
         try {
             Account account = accountService.getAccountByNumber(accountNumber);
