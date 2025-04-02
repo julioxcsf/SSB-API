@@ -5,4 +5,17 @@ spring:
     username: jtest
     password:
   jpa:
-    database-plataform:org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      enabled: true
+
+jwt:
+  secret: teste12345678901234567890123456789012
+  expiration: 3600000  # 1 hora em milissegundos, se usar
+
+#desativa segurança
+#security:
+#  enable: false

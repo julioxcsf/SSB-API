@@ -21,13 +21,6 @@ public class ClientService {
     private final ClientValidator validator;
     private final PasswordEncoder passwordEncoder;
 
-    @PostConstruct  // Isso vai executar automaticamente ao iniciar a aplicação
-    public void testarSenha() {
-        String hashDoBanco = "$2a$10$x4ZqOEFCkVEOb/Z7aZy5mejJGVOABEj6g/QZQf3M1F2ZCvNnfQCTm";
-        boolean resultado = passwordEncoder.matches("123456789", hashDoBanco);
-        System.out.println(resultado ? "✅ Senha bateu!" : "❌ Senha NÃO bateu.");
-    }
-
     public Client save(Client client) {
         validator.check(client);//verifica se o email, cpf e junção nome+dataNascimento ja foram cadastrados
 
