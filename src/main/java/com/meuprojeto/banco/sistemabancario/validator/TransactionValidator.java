@@ -22,6 +22,9 @@ public class TransactionValidator {
         if (origem.getBalance().compareTo(valor) < 0) {
             throw new OperationNotAllowedException("Saldo insuficiente na conta de origem.");
         }
+        if (origem == destino) {
+            throw new OperationNotAllowedException("Não é possível transferir para a mesma conta.");
+        }
     }
 
     public void validateDeposit(Account origem, BigDecimal valor) {
