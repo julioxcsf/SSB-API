@@ -1,11 +1,11 @@
 package com.meuprojeto.banco.sistemabancario.service;
 
-import com.meuprojeto.banco.sistemabancario.exceptions.ClientUnknownException;
 import com.meuprojeto.banco.sistemabancario.model.Client;
 import com.meuprojeto.banco.sistemabancario.repository.ClientRepository;
-import com.meuprojeto.banco.sistemabancario.security.SecurityOperator;
 import com.meuprojeto.banco.sistemabancario.validator.ClientValidator;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +19,24 @@ public class ClientService {
     //injeção pelo Spring
     private final ClientRepository clientRepository;
     private final ClientValidator validator;
+    private final PasswordEncoder passwordEncoder;
+
+    @PostConstruct  // Isso vai executar automaticamente ao iniciar a aplicação
+    public void testarSenha() {
+        String hashDoBanco = "$2a$10$x4ZqOEFCkVEOb/Z7aZy5mejJGVOABEj6g/QZQf3M1F2ZCvNnfQCTm";
+        boolean resultado = passwordEncoder.matches("123456789", hashDoBanco);
+        System.out.println(resultado ? "✅ Senha bateu!" : "❌ Senha NÃO bateu.");
+    }
 
     public Client save(Client client) {
         validator.check(client);//verifica se o email, cpf e junção nome+dataNascimento ja foram cadastrados
-        String password = client.getEmail()+client.getPassword();//aglutinar as string nessa ordem!
-        client.setPassword( SecurityOperator.hashGenerator(password) );//senha real
+
+        //Securiry config
+        client.setPassword(passwordEncoder.encode(client.getPassword()));
+
         return clientRepository.save(client);
     }
+
 
     public Optional<Client> getById(UUID clientId) {
         return clientRepository.findById(clientId);

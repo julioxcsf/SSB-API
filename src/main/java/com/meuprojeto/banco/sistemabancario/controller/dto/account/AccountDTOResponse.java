@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+//Responsta com dados de conta do cliente
 public record AccountDTOResponse(
         UUID idCliente,
         String nomeCliente,

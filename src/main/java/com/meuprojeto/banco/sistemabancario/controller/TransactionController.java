@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@CrossOrigin(origins = "*") // Libera para qualquer origem (somente para teste)
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("transactions")
@@ -49,51 +48,4 @@ public class TransactionController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-
-    /*@GetMapping("/{number}")
-    public ResponseEntity<Object> getTransactionByAccount(@PathVariable String number,
-           @RequestParam(required = false, name = "tipo") TransactionType tipo,
-           @RequestParam(required = false, name = "inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-           @RequestParam(required = false, name = "fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
-        Long account_number = Long.parseLong(number);
-        try {
-
-            Account account = accountService.getAccountByNumber(account_number);
-
-            List<Transaction> originList = transactionService.findByOrigin(account);
-
-            List<Transaction> targetList = transactionService.findByTarget(account);
-
-            List<TransactionDTOResponse> allTransactions  = new ArrayList<>();
-            for (Transaction tr : originList) {
-                allTransactions.add(new TransactionDTOResponse(
-                        tr.getAccountOrigin(),
-                        tr.getAccountTarget(),
-                        tr.getType(),
-                        tr.getValue(),
-                        tr.getTransactionDate()
-                ));
-            }
-
-            for (Transaction tr : targetList) {
-                allTransactions.add(new TransactionDTOResponse(
-                        tr.getAccountOrigin(),
-                        tr.getAccountTarget(),
-                        tr.getType(), // novo tipo para recebimento
-                        tr.getValue(),
-                        tr.getTransactionDate()
-                ));
-            }
-
-            // opcional: ordenar por data mais recente
-            allTransactions.sort(Comparator.comparing(TransactionDTOResponse::dataTransacao).reversed());
-
-            return ResponseEntity.ok(allTransactions);
-
-        } catch (AccountUnknownException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }*/
 }

@@ -35,6 +35,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
+            //e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.time.LocalDate;
 
 //data transfer object
+//por ser mais sucetivel a erros, foi o foco de verificações de entradas
 public record ClientDTO (
         @NotBlank(message = "Nome é obrigatório", groups = OnCreate.class)
         @Size(min = 2, max = 100, message = "Comprimento de nome inválido", groups = OnCreate.class)

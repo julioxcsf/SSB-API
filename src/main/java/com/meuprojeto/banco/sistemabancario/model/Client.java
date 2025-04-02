@@ -30,7 +30,7 @@ public class Client {
     @Column(name = "email",length = 150, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "senha_hash", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "ocupacao")

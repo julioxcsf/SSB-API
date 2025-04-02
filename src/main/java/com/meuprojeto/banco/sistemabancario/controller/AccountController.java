@@ -21,11 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 
-@CrossOrigin(origins = "*") // Libera para qualquer origem (somente para teste)
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/accounts")
@@ -49,6 +50,10 @@ public class AccountController {
                 clientUUID = UUID.fromString(accountDTO.clientId());
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.badRequest().body("Formato de UUID inválido para o cliente.");
+            }
+
+            if (accountDTO.balance().compareTo(BigDecimal.ZERO) < 0) {
+                return ResponseEntity.badRequest().body(Map.of("message", "O saldo inicial não pode ser negativo."));
             }
 
             Optional<Client> client = clientService.getById(clientUUID);
@@ -166,6 +171,22 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (OperationNotAllowedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @Transactional
+    @PutMapping("/{number}/toggle-status")
+    public ResponseEntity<?> toggleAccountStatus(@PathVariable String number) {
+        try {
+            Long accountNumber = Long.parseLong(number);
+            Account account = accountService.getAccountByNumber(accountNumber);
+            account.setActive(!account.isActive());
+            accountService.atualizarConta(account);
+            return ResponseEntity.ok().body("Status da conta atualizado com sucesso.");
+        } catch (AccountUnknownException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar status da conta.");
         }
     }
 }

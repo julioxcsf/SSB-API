@@ -11,8 +11,8 @@ public record TransactionDTO(
         Long numeroContaOrigem,
         Long numeroContaDestino,
         TransactionType tipo,
-        BigDecimal valor,
-        LocalDateTime dataAcao
+        BigDecimal valor
+        //LocalDateTime dataAcao
 ) {
 
     public Transaction mapToTransferTransaction(Account origem, Account destino) {
