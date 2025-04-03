@@ -10,6 +10,16 @@ Este projeto é uma aplicação bancária que oferece operações essenciais com
 
 [🔗 Link da aplicação — ssbproject](https://ssbproject.netlify.app/index.html)
 
+## 👥 Contas de Teste
+
+Use as credenciais abaixo para explorar o sistema:
+
+- 📧 **Email:** cliente_teste@gmail.com  
+  🔑 **Senha:** teste314
+
+- 📧 **Email:** cliente_teste2@gmail.com  
+  🔑 **Senha:** teste314
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
