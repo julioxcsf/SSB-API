@@ -1,4 +1,9 @@
 # Sistema Simplificado de Banco — API RESTful com Java Spring Boot
+![Java](https://img.shields.io/badge/Java-17-blue?logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.3-brightgreen?logo=spring)
+![Docker](https://img.shields.io/badge/Docker-Disponível-blue?logo=docker)
+![RESTful API](https://img.shields.io/badge/API-RESTful-orange)
+![Deploy-Netlify](https://img.shields.io/badge/Deploy-Netlify-success?logo=netlify)
 
 Este projeto é uma aplicação bancária que oferece operações essenciais com autenticação segura, desenvolvida com foco em boas práticas de engenharia de software e implantação em ambiente de produção.
 
