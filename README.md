@@ -2,6 +2,8 @@
 
 Este projeto é uma aplicação bancária que oferece operações essenciais com autenticação segura, desenvolvida com foco em boas práticas de engenharia de software e implantação em ambiente de produção.
 
+[🔗 Link da aplicação — ssbproject](https://ssbproject.netlify.app/index.html)
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
