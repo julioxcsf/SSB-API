@@ -94,11 +94,7 @@ Este projeto é uma aplicação bancária que oferece operações essenciais com
 
 ---
 
-📚 Para detalhes completos, exemplos de requisições e modelos de resposta, consulte a documentação interativa em:
-
-👉 [Documentação da API - Swagger UI](https://swagger-ssb-api.netlify.app/)
-
-Para detalhes completos e exemplos de uso, consulte a Documentação da API - Swagger UI.
+Para detalhes completos e exemplos de uso, consulte a Documentação da API - Swagger HTML2.
 
 ## 📄 Documentação da API
 
