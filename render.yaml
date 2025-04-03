@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ssbbank-api
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: URL_DATABASE
+        value: ssbbank-database.cpwcmik205lc.us-east-2.rds.amazonaws.com
+      - key: DATABASE_USERNAME
+        value: postgres
+      - key: DATABASE_PASSWORD
+        value: postgres
+      - key: PORT_NUMBER
+        value: 8080
+      - key: JWT_SECRET
+        value: X2sUcnmqBZpkc5V4oNR2dt/5KdaZBslU6nlVJDgQaEs=
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://ssbproject.netlify.app
