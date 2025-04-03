@@ -4,7 +4,6 @@
 ![Docker](https://img.shields.io/badge/Docker-Disponível-blue?logo=docker)
 ![RESTful API](https://img.shields.io/badge/API-RESTful-orange)
 ![Deploy-Netlify](https://img.shields.io/badge/Deploy-Netlify-success?logo=netlify)
-![Deploy - Backend AWS](https://img.shields.io/badge/Backend-AWS_RDS_+_Docker-orange?logo=amazonaws&logoColor=white)
 ![Banco de Dados - PostgreSQL AWS](https://img.shields.io/badge/PostgreSQL-AWS_RDS-blue?logo=postgresql&logoColor=white)
 
 Este projeto é uma aplicação bancária que oferece operações essenciais com autenticação segura, desenvolvida com foco em boas práticas de engenharia de software e implantação em ambiente de produção.
