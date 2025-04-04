@@ -10,6 +10,8 @@ Este projeto é uma aplicação bancária que oferece operações essenciais com
 
 [🔗 Link da aplicação — ssbproject](https://ssbproject.netlify.app/index.html)
 
+OBS: por ser um deploy gratuito, a instância dorme com a inatividade e pode demorar mais de 50 segundos para acordar. (Politica comercial do Render)
+
 ## 👥 Contas de Teste
 
 Use as credenciais abaixo para explorar o sistema:
