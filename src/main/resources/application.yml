@@ -2,7 +2,7 @@ spring:
   application:
     name: sistemabancario
   datasource:
-    url: jdbc:postgresql://${URL_DATABASE}:5432/bank
+    url: ${URL_DATABASE}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
